@@ -7,23 +7,72 @@ This work includes the basic layers of AlexNet:
   Input dimention: 3 * 227 * 227 
   Output dimention: 96 * 55 * 55
   Filter dimention: 96 * 3 * 11 * 11
+  group: 1
   
 2. Pool1 
   Input dimention: 96 * 55 * 55 
   Output dimention: 96 * 27 * 27
-  Window dimention:  
+  Window dimention: 3 * 3 
+  
 3. Norm1
+  Input dimention: 96 * 27 * 27 
+  Output dimention: 96 * 27 * 27
+  
 4. Pad1
+  Input dimention: 96 * 27 * 27 
+  Output dimention: 96 * 31 * 31
+  
 5. Conv2 + Relu
+  Input dimention: 96 * 31 * 31 
+  Output dimention: 256 * 27 * 27
+  Filter dimention: 256 * 38 * 5 * 5
+  group: 2
+  
 6. Pool2
+  Input dimention: 256 * 27 * 27 
+  Output dimention: 256 * 13 * 13
+  Window dimention: 3 * 3 
+  
 7. Norm2
+  Input dimention: 256 * 13 * 13 
+  Output dimention: 256 * 13 * 13
+  
 8. Pad2
+  Input dimention: 256 * 13 * 13 
+  Output dimention: 256 * 15 * 15
+  
 9. Conv3 + Relu
+  Input dimention: 256 * 15 * 15 
+  Output dimention: 384 * 13 * 13
+  Filter dimention: 384 * 256 * 3 * 3
+  group: 1
+  
 10. Pad3
-11. Conv4 + Relu
-12. Pad4
-13. Conv5 + Relu
-14. Pool5
+  Input dimention: 384 * 13 * 13 
+  Output dimention: 384 * 15 * 15
 
-All the parameters(Weights and Bias for convolution layers) are geneerated using "Caffe - Deep learning framwork". Each layer mentioned before is an independed Vivado HLS project. Each project contains the required files(testbench, header, top level function, and the Weights and Bias). All the computations are performed using floating point data type. 
+11. Conv4 + Relu
+  Input dimention: 384 * 15 * 15 
+  Output dimention: 384 * 13 * 13
+  Filter dimention: 384 * 192 * 3 * 3
+  group: 2
+  
+12. Pad4
+  Input dimention: 384 * 13 * 13 
+  Output dimention: 384 * 15 * 15
+  
+13. Conv5 + Relu
+  Input dimention: 384 * 15 * 15 
+  Output dimention: 256 * 13 * 13
+  Filter dimention: 256 * 192 * 3 * 3
+  group: 2
+  
+14. Pool5
+  Input dimention: 256 * 13 * 13 
+  Output dimention: 256 * 6 * 6
+  Window dimention: 3 * 3 
+
+All the parameters(Weights and Bias for convolution layers) are geneerated using "Caffe - Deep learning framwork". Each layer mentioned before is an independed Vivado HLS project. Each project contains the required files(testbench, header, top level function, and the Weights and Bias). All the computations are performed using single floating point data type. 
+
+
 
