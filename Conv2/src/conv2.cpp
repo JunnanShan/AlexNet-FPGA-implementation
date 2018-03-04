@@ -33,10 +33,10 @@ void conv2(DataType inp_img[INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL]
 
 {
 //#pragma HLS ALLOCATION instances=fmul limit=130 operation
-#pragma HLS INTERFACE m_axi port=inp_img offset=slave bundle=gmem0 //depth = 57600
-#pragma HLS INTERFACE m_axi port=out_img offset=slave bundle=gmem0 //depth = 64896
-#pragma HLS INTERFACE m_axi port=filter offset=slave bundle=gmem1 //depth = 884736
-#pragma HLS INTERFACE m_axi port=bias offset=slave bundle=gmem1 //depth = 884736
+#pragma HLS INTERFACE m_axi port=inp_img offset=slave bundle=gmem0 
+#pragma HLS INTERFACE m_axi port=out_img offset=slave bundle=gmem0 
+#pragma HLS INTERFACE m_axi port=filter offset=slave bundle=gmem0 
+#pragma HLS INTERFACE m_axi port=bias offset=slave bundle=gmem0 
 
 #pragma HLS INTERFACE s_axilite port=inp_img bundle=control
 #pragma HLS INTERFACE s_axilite port=out_img bundle=control
@@ -88,7 +88,6 @@ L4: for (int batch = 0; batch < FILTER_BATCH/GROUP; batch++){
 
 
 		C1_1:for (int chan = 0; chan < INP_IMAGE_CHANNEL/GROUP; chan++){
-//#pragma HLS PIPELINE
 
 			S11:for (int ii = 0; ii < INP_IMAGE_SIZE; ii++){
 #pragma HLS PIPELINE
@@ -116,8 +115,7 @@ L4: for (int batch = 0; batch < FILTER_BATCH/GROUP; batch++){
 					}
 
 					for (int ii = 0; ii < FILTER_SIZE; ii++){
-						for (int jj = 0; jj < FILTER_SIZE; jj++){
-					#pragma HLS PIPELINE
+						for (int jj = 0; jj < FILTER_SIZE; jj++){					
 							sh[ii][jj] = filter_2D[ii][jj] * window_2D[ii][jj];
 									}
 								}
@@ -176,7 +174,7 @@ L7: for (int batch = FILTER_BATCH/GROUP; batch < FILTER_BATCH; batch++){
 			conv_out[i] = 0;
 
 		C2_1:for (int chan = 0; chan < INP_IMAGE_CHANNEL/GROUP; chan++){
-//#pragma HLS PIPELINE
+
 				S21:for (int ii = 0; ii < INP_IMAGE_SIZE; ii++){
 #pragma HLS PIPELINE
 								S22:for (int jj = 0; jj < INP_IMAGE_SIZE; jj++){
@@ -196,7 +194,6 @@ L7: for (int batch = FILTER_BATCH/GROUP; batch < FILTER_BATCH; batch++){
 			//outer loop for the column index selection
 			L9: for (int col = FILTER_SIZE-1; col < INP_IMAGE_SIZE; col+=STRIDE){
 #pragma HLS PIPELINE
-
 					w2_2: for(int i = 0; i< FILTER_SIZE; i++){
 						w2_3: for (int j=0; j<FILTER_SIZE; j++){
 
@@ -206,7 +203,6 @@ L7: for (int batch = FILTER_BATCH/GROUP; batch < FILTER_BATCH; batch++){
 
 					for (int ii = 0; ii < FILTER_SIZE; ii++){
 						for (int jj = 0; jj < FILTER_SIZE; jj++){
-					#pragma HLS PIPELINE
 							sh[ii][jj] = filter_2D[ii][jj] * window_2D[ii][jj];
 									}
 								}
