@@ -28,37 +28,18 @@ void conv1(DataType inp_img[INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL]
 	   
 {
 #pragma HLS ALLOCATION instances=fmul limit=130 operation
-#pragma HLS INTERFACE m_axi port=inp_img offset=slave bundle=gmem //depth = 675
-#pragma HLS INTERFACE m_axi port=out_img offset=slave bundle=gmem //depth = 12
-//#pragma HLS INTERFACE m_axi port=filter offset=slave bundle=gmem //depth = 1089
+#pragma HLS INTERFACE m_axi port=inp_img offset=slave bundle=gmem 
+#pragma HLS INTERFACE m_axi port=out_img offset=slave bundle=gmem 
 
 #pragma HLS INTERFACE s_axilite port=inp_img bundle=control
 #pragma HLS INTERFACE s_axilite port=out_img bundle=control
-//#pragma HLS INTERFACE s_axilite port=filter bundle=control
 
 #pragma HLS INTERFACE s_axilite port=return bundle=control
-/*
-  const DataType filter_local[FILTER_BATCH][INP_IMAGE_CHANNEL][FILTER_SIZE][FILTER_SIZE] = {
-                           #include "conv1Weights.txt"
-  	  	  	  	  	  	  	  	  	  	  };
-  	  	  	  	  	  	  	  	  	  	  */
+	
+	
   const DataType filter_local[96][INP_IMAGE_CHANNEL][FILTER_SIZE][FILTER_SIZE] = {
                              #include "conv1Weights.txt"
-    	  	  	  	  	  	  	  	  	  	  };
-/*
-  	  for (int c = 0; c < INP_IMAGE_CHANNEL; c++)
-  		   {
-  			 for (int i = 0; i < FILTER_SIZE; i++)
-  			  	 {
-  				  	for (int j = 0; j < FILTER_SIZE; j++)
-  		    		   {
-  //#pragma HLS PIPELINE
-  		    			  //filter_local[c][i][j] = inp_img[c*INP_IMAGE_SIZE*INP_IMAGE_SIZE + (i-STRIDE)*INP_IMAGE_SIZE + j];
-  		    		      cout << "filter_local[0][" << c << "][" << i << "]["<< j <<"] = " << filter_local[0][c][i][j] << endl;
-  		    		   }
-  			  	 }
-  		    }
-  		    */
+    	  	  	  	  	  	  	  	  	  	  }
 
 #pragma HLS ARRAY_PARTITION variable=filter_local complete dim=0
 
@@ -122,10 +103,6 @@ L5:    for (int row = FILTER_SIZE-1; row < INP_IMAGE_SIZE; row+=STRIDE)
 	//outer loop for the column index selection
 L6:        for (int col = FILTER_SIZE-1; col < INP_IMAGE_SIZE; col+=STRIDE)
             {
-//#pragma HLS DATAFLOW
-
-//	{
-//	#pragma HLS FUNCTION_EXTRACT
 //2nd step: using the linebuffer to form a 3D sliding window
 	////////////////////////////////////////////////////////////////////////////////////////////
 L7:             for (int chan = 0; chan < INP_IMAGE_CHANNEL; chan++)
@@ -134,8 +111,6 @@ L7:             for (int chan = 0; chan < INP_IMAGE_CHANNEL; chan++)
 #pragma HLS PIPELINE
 //#pragma HLS DATAFLOW
 
-//	{
-//#pragma HLS FUNCTION_EXTRACT
             	//this if branch is used for the case that the index of the image start a new line
             	//which means the column equals to the filter size
 	            if (col == FILTER_SIZE-1){
@@ -145,8 +120,6 @@ L7:             for (int chan = 0; chan < INP_IMAGE_CHANNEL; chan++)
 
 L8:	          for (int i = 0; i < STRIDE_NEW; i++)
 			{
-#pragma HLS PIPELINE
-#pragma HLS UNROLL factor=11
 
 L9:				for (int ii = 0; ii < FILTER_SIZE-STRIDE; ii++)
 	            	  {
@@ -158,8 +131,6 @@ L9:				for (int ii = 0; ii < FILTER_SIZE-STRIDE; ii++)
 	            	//to fill the new coming 3D pixels
 L10:	          for (int n = 0; n < STRIDE_NEW; n++)
 					{
-#pragma HLS PIPELINE
-#pragma HLS UNROLL factor=11
 L11:
 //#pragma HLS PIPELINE
 						for (int m = 0; m < STRIDE; m++)
@@ -172,8 +143,6 @@ L11:
 	            	//put the right_col_3D at the most right of the sliding window
 L12:	            	for (int ii = 0; ii < FILTER_SIZE; ii++)
 	            	  {
-#pragma HLS PIPELINE
-#pragma HLS UNROLL factor=11
 L13:	            		for (int jj = 0; jj < STRIDE_NEW; jj++)
 	            		  {
 	            			window_3D[chan][ii][jj] = right_col_3D_l[chan][ii][jj];
@@ -190,8 +159,6 @@ L13:	            		for (int jj = 0; jj < STRIDE_NEW; jj++)
 
 L14:	            	   for (int ii = 0; ii < FILTER_SIZE-STRIDE; ii++)
 	            			{
-#pragma HLS PIPELINE
-#pragma HLS UNROLL factor=7
 L15:	            		   for (int i = 0; i < STRIDE; i++)
 		            		     {
 	            			   right_col_3D[chan][ii][i] = line_buffer_3D[chan][ii][col-(STRIDE-1)+i] = line_buffer_3D[chan][ii+STRIDE][col-(STRIDE-1)+i];
@@ -201,8 +168,6 @@ L15:	            		   for (int i = 0; i < STRIDE; i++)
 	            	   //to fill the new coming 3D pixels
 L16:	            	   for (int m = 0; m < STRIDE; m++)
 	            	     {
-#pragma HLS PIPELINE
-#pragma HLS UNROLL factor=4
 
 L17:	            		   for (int n = 0; n < STRIDE; n++)
 	            		     {
@@ -215,8 +180,6 @@ L17:	            		   for (int n = 0; n < STRIDE; n++)
 	            	   //shift from left to right the sliding window to make room for the new_pixels.
 L18:	            	   for (int ii = 0; ii < FILTER_SIZE; ii++)
 	            	     {
-#pragma HLS PIPELINE
-#pragma HLS UNROLL factor=11
 L19:	            		   for (int jj = 0; jj < FILTER_SIZE-STRIDE; jj++)
 	            		     {
 	            			   window_3D[chan][ii][jj] = window_3D[chan][ii][jj+STRIDE];
@@ -226,8 +189,6 @@ L19:	            		   for (int jj = 0; jj < FILTER_SIZE-STRIDE; jj++)
 	            	   //put the right_col_3D at the most right of the sliding window
 L20:	            	   for (int ii = 0; ii < FILTER_SIZE; ii++)
 	            	     {
-#pragma HLS PIPELINE
-#pragma HLS UNROLL factor=11
 L21:	            		   for (int jj = 0; jj < STRIDE; jj++)
 	            		     {
 	            			   window_3D[chan][ii][FILTER_SIZE-STRIDE+jj] = right_col_3D[chan][ii][jj];
@@ -236,126 +197,79 @@ L21:	            		   for (int jj = 0; jj < STRIDE; jj++)
 
     	            }////END OF ELSE
 	}//end of chan
-//}//end of function extraction
-/*
-	if((row == FILTER_SIZE-1)&&(col == FILTER_SIZE-1))
-	{
-		for (int c = 0; c < INP_IMAGE_CHANNEL; c++)
-		  		   {
-		  			 for (int i = 0; i < FILTER_SIZE; i++)
-		  			  	 {
-		  				  	for (int j = 0; j < FILTER_SIZE; j++)
-		  		    		   {
-		  //#pragma HLS PIPELINE
-		  		    			  //filter_local[c][i][j] = inp_img[c*INP_IMAGE_SIZE*INP_IMAGE_SIZE + (i-STRIDE)*INP_IMAGE_SIZE + j];
-		  		    		      cout << "window_3D[" << c << "][" << i << "]["<< j <<"] = " << window_3D[c][i][j] << endl;
-		  		    		   }
-		  			  	 }
-		  		    }
-	}
-	*/
- //}//end of function1
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 //3rd step: using the sliding window to calculate the output of the convolution using the 96 batch of the filter
-//{
-//#pragma HLS FUNCTION_EXTRACT
-
 
 		L1:           for (int batch = 0; batch < FILTER_BATCH; batch++)
 		    	       {
-//#pragma HLS UNROLL factor=2
-			            filter_out[batch] = 0;
 #pragma HLS PIPELINE
+			            filter_out[batch] = 0;
 						for (int chan = 0; chan < INP_IMAGE_CHANNEL; chan++)
 				         {
-#pragma HLS UNROLL
-//#pragma HLS PIPELINE
-
 
 	    L22:	            for (int i = 0; i < FILTER_SIZE; i++)
 	    	                 {
-//#pragma HLS PIPELINE
-//#pragma HLS UNROLL factor=2
 	    L23:	              for (int j = 0; j < FILTER_SIZE; j++)
-	     	 	 	 	 	   {
-	    	            		//lm [i][j]=  window_3D[chan][i][j] * filter[batch*INP_IMAGE_CHANNEL*FILTER_SIZE*FILTER_SIZE + chan*FILTER_SIZE*FILTER_SIZE + i*FILTER_SIZE + j];
-	    	            		//lm [i][j]=  window_3D[chan][i][j] * filter[batch][chan][i][j];
-	    	            		//lm [i*FILTER_SIZE +j]=  window_3D[chan][i][j] * filter_local[chan][i][j];
+	     	 	 	 	 	   {	    	        
 	    						lm [chan][i*FILTER_SIZE +j] =  window_3D[chan][i][j] * filter_local[batch][chan][i][j];
-	    						//cout << "lm[" << chan << "][" << i*FILTER_SIZE +j << "] = " << lm[chan][i*FILTER_SIZE +j] << endl;
-	     	 	 	 	 	   }
+	    					 }
 	    	                 }
 
 
 L24:		    		for (int i = 0; i < 61; i++)
 	    	              {
-#pragma HLS PIPELINE
-//can not unroll
 	    					sum[chan][i]=lm[chan][i]+lm[chan][FILTER_SIZE*FILTER_SIZE-i];
 	    	              }
 
 
 L25:	    			for (int j = 0; j < 31; j++)
 	     	 	 	 {
-#pragma HLS PIPELINE
-//#pragma HLS UNROLL when factor =16 co-sim failed
-#pragma HLS UNROLL factor=15
 	    	            		sum2[chan][j] = sum[chan][j] + sum[chan][61-j];
 	    	            	  }
 
 L26:	    		for (int j = 0; j < 16; j++)
-	    		 	 	 	 	 	 	 {
-#pragma HLS PIPELINE
-#pragma HLS UNROLL factor=4
-
-	    			            		sum3[chan][j] = sum2[chan][j] + sum2[chan][31-j];
-	    			            	  }
+	    		 {
+ 					sum3[chan][j] = sum2[chan][j] + sum2[chan][31-j];
+	    		 }
 
 
 L27:	    				for (int j = 0; j < 8; j++)
-	    				 	 	 	 	 {
-#pragma HLS PIPELINE
-#pragma HLS UNROLL
-	    					            	sum4[chan][j] = sum3[chan][j] + sum3[chan][15-j];
-	    					              }
+	    				 	  {
+	    					      sum4[chan][j] = sum3[chan][j] + sum3[chan][15-j];
+	    					  }
 
 L28:	    				for (int j = 0; j < 4; j++)
-	    							 	 	 	 {
-#pragma HLS PIPELINE
-#pragma HLS UNROLL
+	    					  {
 
-	    									    sum5[chan][j] = sum4[chan][j] + sum4[chan][7-j];
-	    									  }
+	    					       sum5[chan][j] = sum4[chan][j] + sum4[chan][7-j];
+	    					  }
 
 L29:	    				for (int j = 0; j < 2; j++)
-	    										 {
-#pragma HLS PIPELINE
-#pragma HLS UNROLL
-	    										sum6[chan][j] = sum5[chan][j] + sum5[chan][3-j];
-	    									     }
+	    					 {
+
+	    						sum6[chan][j] = sum5[chan][j] + sum5[chan][3-j];
+	    					 }
 	    			  sum7[chan]=sum6[chan][0] + sum6[chan][1];
-	                  filter_out[batch] += sum7[chan];
-				                  }//end of chan
+	                          filter_out[batch] += sum7[chan];
+			}//end of chan
+			
 	                  out_img_3D[batch][(row-FILTER_SIZE+1)/STRIDE][(col-FILTER_SIZE+1)/STRIDE] = filter_out[batch];
-	                              //add the bias of each output channel
-	                              DataType out = out_img_3D [batch][(row-FILTER_SIZE+1)/STRIDE][(col-FILTER_SIZE+1)/STRIDE] + bias[batch];
+	                  //add the bias of each output channel
+	                  DataType out = out_img_3D [batch][(row-FILTER_SIZE+1)/STRIDE][(col-FILTER_SIZE+1)/STRIDE] + bias[batch];
 
-	                              //start the Relu
-	                              if (out > 0){
-	                              	out_img[batch*OUT_IMAGE_SIZE*OUT_IMAGE_SIZE + ((row-FILTER_SIZE+1)/STRIDE)*OUT_IMAGE_SIZE + (col-FILTER_SIZE+1)/STRIDE] = out;
+	                   //start the Relu
+	                   if (out > 0){
+	                    out_img[batch*OUT_IMAGE_SIZE*OUT_IMAGE_SIZE + ((row-FILTER_SIZE+1)/STRIDE)*OUT_IMAGE_SIZE + (col-FILTER_SIZE+1)/STRIDE] = out;
 	                                }
-	                              else
-	                              	out_img[batch*OUT_IMAGE_SIZE*OUT_IMAGE_SIZE + ((row-FILTER_SIZE+1)/STRIDE)*OUT_IMAGE_SIZE + (col-FILTER_SIZE+1)/STRIDE] = 0;
-		    	       }//batch
-//	}//end of function extraction
-
+	                   else
+	                    out_img[batch*OUT_IMAGE_SIZE*OUT_IMAGE_SIZE + ((row-FILTER_SIZE+1)/STRIDE)*OUT_IMAGE_SIZE + (col-FILTER_SIZE+1)/STRIDE] = 0;
+		   }//batch
 
           }//col
       }//row
-
-
 }//conv
 
 
