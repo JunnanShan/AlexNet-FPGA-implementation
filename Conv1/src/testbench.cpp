@@ -35,14 +35,9 @@ void conv1(DataType inp_image[INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNE
 //main function used to test the functionality of the kernel.
 int main()
 {
-  //int input_vector_size_bytes = sizeof(float) * INP_IMAGE_CHANNEL * INP_IMAGE_SIZE * INP_IMAGE_SIZE;
-  //float *inp_image = (float *) malloc(input_vector_size_bytes);
-	//initialize the "inp_image" array and print them in order to check it
-
-
     ifstream inp_file("/home/junnan/Vivado_HLS/Conv1/inp_image.txt");
     DataType *inp_image;
-//    inp_image = (DataType *)sds_alloc( INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL * sizeof(DataType));
+
     inp_image = (DataType *)malloc( INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL * sizeof(DataType));
 	if(inp_file.is_open())
 	{
@@ -58,39 +53,33 @@ int main()
 	}
     cout << "inp_image[0] = " << inp_image[0] << endl;
 
-	//DataType *out_image = (DataType *)sds_alloc(OUT_IMAGE_SIZE * OUT_IMAGE_SIZE * FILTER_BATCH * sizeof(DataType));
-	DataType *out_image = (DataType *)malloc(OUT_IMAGE_SIZE * OUT_IMAGE_SIZE * FILTER_BATCH * sizeof(DataType));
-//  float *out_image = (float *)malloc(OUT_IMAGE_SIZE * OUT_IMAGE_SIZE * FILTER_BATCH * sizeof(float));
-//  float out_image[OUT_IMAGE_SIZE * OUT_IMAGE_SIZE * FILTER_BATCH];
+	
+  DataType *out_image = (DataType *)malloc(OUT_IMAGE_SIZE * OUT_IMAGE_SIZE * FILTER_BATCH * sizeof(DataType));
+
   cout << "Start calling the conv1 HW function" << endl;
 
-//  std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+
   //call the "conv1" function using the "inp_image" argument, it returns the output in the "out_image" array
   conv1(inp_image, out_image);
 
-//  std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
   cout << "After calling the conv1 HW function" << endl;
-//  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count();
-//  cout << "duration = " << duration << endl;
+
   //free all the dynamically allocated memory
-//  sds_free(inp_image);
-  //sds_free(inp_image);
-  //sds_free(filter);
+
   free(inp_image);
-  //free(filter);
 
   //dump the output image into a txt file "out_image.txt"
   ofstream data("/home/junnan/Vivado_HLS/Conv1/out_image.txt");
   for (int k = 0; k < OUT_IMAGE_SIZE*OUT_IMAGE_SIZE*FILTER_BATCH; k++)
     {
       data << out_image[k] << "\n";
-      cout << "out_image[" << k << "] = " << out_image[k] << endl;
     }
 
 
   const DataType out_img[] = {
                          #include "out_conv1.txt"
                        };
+	
       DataType big_diff = 0;
       DataType diff[OUT_IMAGE_SIZE*OUT_IMAGE_SIZE*FILTER_BATCH];
   for (int i=0; i<OUT_IMAGE_SIZE*OUT_IMAGE_SIZE*FILTER_BATCH; i++){
@@ -103,7 +92,7 @@ int main()
   }
 
   cout << "Functionality pass" << endl;
-  //sds_free(out_image);
+  
   free(out_image);
   return 0;
 }
