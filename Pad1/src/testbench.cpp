@@ -14,7 +14,7 @@
 #include <fstream>
 //#include <chrono>
 //#include "sds_lib.h"
-#include "padding.h"
+#include "pad1.h"
 #include "ap_fixed.h"
 
 //typedef ap_fixed<32,16> DataType;
@@ -37,7 +37,7 @@ int main()
 	int pad = 2;
 
 
-    ifstream inp_file("/home/junnan/Vivado_HLS/padding/out_norm1.txt");
+    ifstream inp_file("/home/junnan/Vivado_HLS/Pad1/out_norm1.txt");
     DataType *inp_image;
 //    inp_image = (DataType *)sds_alloc( INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL * sizeof(DataType));
     inp_image = (DataType *)malloc( INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL * sizeof(DataType));
@@ -60,7 +60,7 @@ int main()
   cout << "Start calling the conv1 HW function" << endl;
 
   //call the "conv1" function using the "inp_image" argument, it returns the output in the "out_image" array
-  padding(inp_image, out_image, pad);
+  pad1(inp_image, out_image, pad);
 
 //  std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
   cout << "After calling the conv1 HW function" << endl;
@@ -69,7 +69,7 @@ int main()
 
 
   //dump the output image into a txt file "out_image.txt"
-  ofstream data("/home/junnan/Vivado_HLS/padding/inp_conv2.txt");
+  ofstream data("/home/junnan/Vivado_HLS/Pad1/inp_conv2.txt");
   for (int k = 0; k < OUT_IMAGE_SIZE*OUT_IMAGE_SIZE*OUT_IMAGE_CHANNEL; k++)
     {
       data << out_image[k] << "\n";
