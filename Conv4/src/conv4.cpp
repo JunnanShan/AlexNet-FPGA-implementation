@@ -30,10 +30,10 @@ void conv4(DataType inp_img[INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL]
 
 {
 //#pragma HLS ALLOCATION instances=fmul limit=130 operation
-#pragma HLS INTERFACE m_axi port=inp_img offset=slave bundle=gmem0 //depth = 57600
-#pragma HLS INTERFACE m_axi port=out_img offset=slave bundle=gmem0 //depth = 64896
-#pragma HLS INTERFACE m_axi port=filter offset=slave bundle=gmem1 //depth = 884736
-#pragma HLS INTERFACE m_axi port=bias offset=slave bundle=gmem1 //depth = 884736
+#pragma HLS INTERFACE m_axi port=inp_img offset=slave bundle=gmem0 
+#pragma HLS INTERFACE m_axi port=out_img offset=slave bundle=gmem0 
+#pragma HLS INTERFACE m_axi port=filter offset=slave bundle=gmem0 
+#pragma HLS INTERFACE m_axi port=bias offset=slave bundle=gmem0 
 
 #pragma HLS INTERFACE s_axilite port=inp_img bundle=control
 #pragma HLS INTERFACE s_axilite port=out_img bundle=control
@@ -77,7 +77,7 @@ L4: for (int batch = 0; batch < FILTER_BATCH/GROUP; batch++){
 		F1_1:for (int h = 0; h <  FILTER_SIZE * FILTER_SIZE * FILTER_CHANNEL; h++){
 #pragma HLS PIPELINE
 					filter_local[h] = filter[batch*FILTER_CHANNEL*FILTER_SIZE*FILTER_SIZE + h];
-												  //cout << "filter_local[0][" << c << "][" << i << "]["<< j <<"] = " << filter_local[0][c][i][j] << endl;
+					//cout << "filter_local[0][" << c << "][" << i << "]["<< j <<"] = " << filter_local[0][c][i][j] << endl;
 		}
 
 		for(int i=0; i<OUT_IMAGE_SIZE*OUT_IMAGE_SIZE; i++)
@@ -148,19 +148,7 @@ M1:		for (int i=0; i<OUT_IMAGE_SIZE; i++){
 
 	}//end of batch1
 
-//store the input image to local
-//L2_1:	  for (int c = 0; c < INP_IMAGE_CHANNEL/GROUP; c++)
-//	   {
-//L2_2:			 for (int i = 0; i < INP_IMAGE_SIZE; i++)
-//		  	 {
-//L2_3:				  	for (int j = 0; j < INP_IMAGE_SIZE; j++)
-//	    		   {
-//#pragma HLS PIPELINE
-//	    			  inp_image_local[c][i][j] = inp_img[(c+INP_IMAGE_CHANNEL/GROUP)*INP_IMAGE_SIZE*INP_IMAGE_SIZE + i*INP_IMAGE_SIZE + j];
-//	    		      //cout << "line_buffer_3D[" << c << "][" << i << "]["<< j <<"] = " << line_buffer_3D[c][i][j] << endl;
-//	    		   }
-//		  	 }
-//	    }
+
 
 L2_1:	  for (int c = 0; c < INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL/GROUP; c++)
 	    {
@@ -171,16 +159,6 @@ L2_1:	  for (int c = 0; c < INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL/
 
 
 L7: for (int batch = FILTER_BATCH/GROUP; batch < FILTER_BATCH; batch++){
-
-//		F2_1:for (int chan = 0; chan < INP_IMAGE_CHANNEL/GROUP; chan++){
-//			F2_2:for (int ii = 0; ii < FILTER_SIZE; ii++){
-//				F2_3:for (int jj = 0; jj < FILTER_SIZE; jj++){
-//#pragma HLS PIPELINE
-//					filter_local[chan][ii][jj] = filter[batch*INP_IMAGE_CHANNEL*FILTER_SIZE*FILTER_SIZE + chan*FILTER_SIZE*FILTER_SIZE + ii*FILTER_SIZE + jj];
-//												  //cout << "filter_local[0][" << c << "][" << i << "]["<< j <<"] = " << filter_local[0][c][i][j] << endl;
-//				}
-//			}
-//		}
 
 
 		F2_1:for (int h = 0; h <  FILTER_SIZE * FILTER_SIZE * FILTER_CHANNEL; h++){
@@ -229,16 +207,8 @@ L7: for (int batch = FILTER_BATCH/GROUP; batch < FILTER_BATCH; batch++){
 					for (int ii = 0; ii < FILTER_SIZE; ii++){
 						for (int jj = 0; jj < FILTER_SIZE; jj++){
 					#pragma HLS PIPELINE
-										//filter_2D[ii][jj] = filter_local[chan][ii][jj];
-//							            filter_2D[ii][jj] = filter_local[chan*FILTER_SIZE*FILTER_SIZE + ii*FILTER_SIZE + jj];
-//										window_2D[ii][jj] = window[chan][ii][jj];
-//										conv_out += filter_2D[ii][jj] * window_2D[ii][jj];
-																	  //cout << "filter_local[0][" << c << "][" << i << "]["<< j <<"] = " << filter_local[0][c][i][j] << endl;
-//										filter_2D[chan][ii][jj] = filter_local[chan*FILTER_SIZE*FILTER_SIZE + ii*FILTER_SIZE + jj];							  //cout << "filter_local[0][" << c << "][" << i << "]["<< j <<"] = " << filter_local[0][c][i][j] << endl;
-//										conv_out += filter_2D[chan][ii][jj] * window[chan][ii][jj];
-//										conv_out[batch][(row-FILTER_SIZE+1)/STRIDE][(col-FILTER_SIZE+1)/STRIDE] += filter_2D[ii][jj] * window_2D[ii][jj];
+										
 							sh[ii][jj] = filter_2D[ii][jj] * window_2D[ii][jj];
-//							conv_out[batch*OUT_IMAGE_SIZE*OUT_IMAGE_SIZE + ((row-FILTER_SIZE+1)/STRIDE)*OUT_IMAGE_SIZE + (col-FILTER_SIZE+1)/STRIDE] += filter_2D[ii][jj] * window_2D[ii][jj];
 									}
 								}
 								lm = 0;
@@ -249,21 +219,6 @@ L7: for (int batch = FILTER_BATCH/GROUP; batch < FILTER_BATCH; batch++){
 								}
 								conv_out[((row-FILTER_SIZE+1)/STRIDE)*OUT_IMAGE_SIZE + (col-FILTER_SIZE+1)/STRIDE] += lm;
 
-//					w21: for(int i = 0; i< FILTER_SIZE; i++){
-//						w22: for (int j=0; j<FILTER_SIZE; j++){
-//					#pragma HLS PIPELINE
-//										window_2D[i][j] = window[chan][i][j];
-//									}
-//								}
-//
-//					C2_2:for (int ii = 0; ii < FILTER_SIZE; ii++){
-//						C2_3:for (int jj = 0; jj < FILTER_SIZE; jj++){
-//
-//							//conv_out[chan][ii][jj] += filter_local[chan][ii][jj] * window[chan][ii][jj];
-//							conv_out += filter_2D[ii][jj] * window_2D[ii][jj];
-//																  //cout << "filter_local[0][" << c << "][" << i << "]["<< j <<"] = " << filter_local[0][c][i][j] << endl;
-//						}
-//					}
 				}//end of convolution
 		}//end of col
 				}//end of row
@@ -271,10 +226,6 @@ M2:		for (int i=0; i<OUT_IMAGE_SIZE; i++){
 #pragma HLS PIPELINE
 					for (int j=0; j<OUT_IMAGE_SIZE; j++){
 						DataType out = conv_out[i*OUT_IMAGE_SIZE + j] + bias[batch];
-//						DataType out = conv_out[batch][i][j] + bias[batch];
-						//add the bias of each output channel
-						//DataType out = conv_out[batch][i][j];
-
 						//start the Relu
 						if (out > 0)
 							out_img[batch*OUT_IMAGE_SIZE*OUT_IMAGE_SIZE + i*OUT_IMAGE_SIZE + j] = out;
