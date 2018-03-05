@@ -1,3 +1,10 @@
+/* 
+======================================================
+*
+* Author:   Junnan Shan (junnan.shan@polito.it)
+*
+======================================================
+*/
 #include <sys/types.h>
 #include <sys/stat.h>
 //#include <fcnt1.h>
