@@ -24,8 +24,6 @@
 //typedef ap_fixed<32,16> DataType;
 typedef float DataType;
 
-//#define EPSILON 0.001
-
 using namespace std;
 
 void conv1(DataType inp_image[INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL],
