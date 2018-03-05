@@ -38,7 +38,7 @@ void pad1(DataType inp_img[INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL],
 		}
 	      else
  		{
-		  out_img[c*OUT_IMAGE_SIZE*OUT_IMAGE_SIZE + i*OUT_IMAGE_SIZE + j] = inp_img[c*INP_IMAGE_SIZE*INP_IMAGE_SIZE + (i-2)*INP_IMAGE_SIZE + (j-pad)];
+		  out_img[c*OUT_IMAGE_SIZE*OUT_IMAGE_SIZE + i*OUT_IMAGE_SIZE + j] = inp_img[c*INP_IMAGE_SIZE*INP_IMAGE_SIZE + (i-pad)*INP_IMAGE_SIZE + (j-pad)];
 		}
        }//end of j colomn index
 	  }//end of i row index
