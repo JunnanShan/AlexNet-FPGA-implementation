@@ -1,6 +1,10 @@
-//in this c++ file, we define the 1st convolution layer of Alexnet. Actually it's not just convolution, it's convolution together with
-//Relu, we just compare the output of the convolution, if it's greater than 0, then we store it as output, if it's negative, we store it as 0.
-//Also in caffe the Relu layer is inlined with the other layer.
+/* 
+======================================================
+*
+* Author:   Junnan Shan (junnan.shan@polito.it)
+*
+======================================================
+*/
 #include <sys/types.h>
 #include <sys/stat.h>
 //#include <fcnt1.h>
@@ -39,7 +43,6 @@ int main()
 
     ifstream inp_file("/home/junnan/Vivado_HLS/Pad1/out_norm1.txt");
     DataType *inp_image;
-//    inp_image = (DataType *)sds_alloc( INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL * sizeof(DataType));
     inp_image = (DataType *)malloc( INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL * sizeof(DataType));
 	if(inp_file.is_open())
 	{
@@ -62,7 +65,6 @@ int main()
   //call the "conv1" function using the "inp_image" argument, it returns the output in the "out_image" array
   pad1(inp_image, out_image, pad);
 
-//  std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
   cout << "After calling the conv1 HW function" << endl;
 
   free(inp_image);
@@ -76,9 +78,6 @@ int main()
       cout << "out_image[" << k << "] = " << out_image[k] << endl;
     }
 
-
-//  cout << "Functionality pass" << endl;
-  //sds_free(out_image);
   free(out_image);
   return 0;
 }
