@@ -20,6 +20,9 @@ There are the basic layers of AlexNet in the following:
  3. Norm1
   Input dimention: 96 * 27 * 27   
   Output dimention: 96 * 27 * 27  
+  local size: 5  
+  alpha: 0.0001  
+  Beta: 0.75
   
  4. Pad1
   Input dimention: 96 * 27 * 27   
@@ -39,6 +42,9 @@ There are the basic layers of AlexNet in the following:
  7. Norm2
   Input dimention: 256 * 13 * 13   
   Output dimention: 256 * 13 * 13  
+  local size: 5  
+  alpha: 0.0001  
+  Beta: 0.75
   
  8. Pad2
   Input dimention: 256 * 13 * 13   
