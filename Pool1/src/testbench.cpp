@@ -1,6 +1,10 @@
-//in this c++ file, we define the 1st convolution layer of Alexnet. Actually it's not just convolution, it's convolution together with
-//Relu, we just compare the output of the convolution, if it's greater than 0, then we store it as output, if it's negative, we store it as 0.
-//Also in caffe the Relu layer is inlined with the other layer.
+/* 
+======================================================
+*
+* Author:   Junnan Shan (junnan.shan@polito.it)
+*
+======================================================
+*/
 #include <sys/types.h>
 #include <sys/stat.h>
 //#include <fcnt1.h>
@@ -29,11 +33,6 @@ void pool1(DataType inp_img[INP_IMG_CHAN*INP_IMG_SIZE*INP_IMG_SIZE], DataType ou
 //main function used to test the functionality of the kernel.
 int main()
 {
-  //int input_vector_size_bytes = sizeof(float) * INP_IMAGE_CHANNEL * INP_IMAGE_SIZE * INP_IMAGE_SIZE;
-  //float *inp_image = (float *) malloc(input_vector_size_bytes);
-	//initialize the "inp_image" array and print them in order to check it
-
-
     ifstream inp_file("/home/junnan/Work/Vivado_HLS/Pool1/out_conv1.txt");
     DataType *inp_image;
     inp_image = (DataType *)malloc( INP_IMG_SIZE * INP_IMG_SIZE * INP_IMG_CHAN * sizeof(DataType));
