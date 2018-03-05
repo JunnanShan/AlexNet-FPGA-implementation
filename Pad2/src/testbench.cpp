@@ -14,7 +14,7 @@
 #include <fstream>
 //#include <chrono>
 //#include "sds_lib.h"
-#include "padding2.h"
+#include "pad2.h"
 #include "ap_fixed.h"
 
 //typedef ap_fixed<32,16> DataType;
