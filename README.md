@@ -81,6 +81,11 @@ All the parameters(Weights and Bias for convolution layers) are geneerated using
 Tool: Vivado HLS 2017.3.1  
 Target FPGA: xcvu9p-flgb2104-2-i
 
+|resources                          |
+|-----------------------------------|
+|BRAM     |DSP     |FF      |LUT    |
+
+
 
 
 
