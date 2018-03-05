@@ -1,3 +1,11 @@
+/* 
+======================================================
+*
+* Author:   Junnan Shan (junnan.shan@polito.it)
+*
+======================================================
+*/
+
 #include <sys/types.h>
 #include <sys/stat.h>
 //#include <fcnt1.h>
@@ -23,10 +31,6 @@ using namespace std;
 void norm1(DataType inp_img[INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL],
 	  DataType out_img[OUT_IMAGE_SIZE * OUT_IMAGE_SIZE * OUT_IMAGE_CHANNEL])
 {
-	/*
-#pragma HLS INTERFACE ap_fifo port=out_img
-#pragma HLS INTERFACE ap_fifo port=inp_img
-*/
 #pragma HLS INTERFACE m_axi port=inp_img offset=slave bundle=gmem0
 #pragma HLS INTERFACE m_axi port=out_img offset=slave bundle=gmem0
 
@@ -37,7 +41,6 @@ void norm1(DataType inp_img[INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL]
 
 	DataType inp_image[INP_IMAGE_CHANNEL][INP_IMAGE_SIZE][INP_IMAGE_SIZE];
 #pragma HLS ARRAY_PARTITION variable=inp_image complete dim=1
-//#pragma HLS ARRAY_PARTITION variable=inp_image cyclic factor=5 dim=1
 
 	DataType sum[INP_IMAGE_SIZE][INP_IMAGE_SIZE];
 #pragma HLS ARRAY_PARTITION variable=sum complete dim=0
@@ -59,11 +62,10 @@ L1:	for (int i=0; i<INP_IMAGE_CHANNEL; i++){
   L3:	    for (int y=0; y<INP_IMAGE_SIZE; y++){
 #pragma HLS PIPELINE
   	sum[x][y] = 0;
-  	L4:		for (int m = 0; m<=2; m++)
-//  	#pragma HLS LOOP_TRIPCOUNT max=5
+  L4:		for (int m = 0; m<=2; m++)
   	#pragma HLS PIPELINE
   				sum[x][y] += powf(inp_image[m][x][y], 2);
-  	//		sum += powf(inp_img[m*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y], 2);
+  	
 
   		    out_img[x*INP_IMAGE_SIZE + y] = inp_image[0][x][y] / powf((1+0.00002*sum[x][y]), 0.75);
   	//	    out_img[i*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y] = inp_img[i*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE
