@@ -35,7 +35,7 @@ int main()
 
     ifstream inp_file("/home/junnan/Vivado_HLS/Pad2/out_norm2.txt");
     DataType *inp_image;
-//    inp_image = (DataType *)sds_alloc( INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL * sizeof(DataType));
+
     inp_image = (DataType *)malloc( INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL * sizeof(DataType));
 	if(inp_file.is_open())
 	{
@@ -58,7 +58,6 @@ int main()
   //call the "conv1" function using the "inp_image" argument, it returns the output in the "out_image" array
   pad2(inp_image, out_image);
 
-//  std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
   cout << "After calling the conv1 HW function" << endl;
 
   free(inp_image);
@@ -72,9 +71,6 @@ int main()
       //cout << "out_image[" << k << "] = " << out_image[k] << endl;
     }
 
-
-//  cout << "Functionality pass" << endl;
-  //sds_free(out_image);
   free(out_image);
   return 0;
 }
