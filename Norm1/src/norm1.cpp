@@ -68,8 +68,6 @@ L1:	for (int i=0; i<INP_IMAGE_CHANNEL; i++){
   	
 
   		    out_img[x*INP_IMAGE_SIZE + y] = inp_image[0][x][y] / powf((1+0.00002*sum[x][y]), 0.75);
-  	//	    out_img[i*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y] = inp_img[i*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE
-
      }
   }
   //////////////////////////////////////////////////////////this is for chan = 1;
@@ -79,29 +77,17 @@ L1:	for (int i=0; i<INP_IMAGE_CHANNEL; i++){
   L6:	    for (int y=0; y<INP_IMAGE_SIZE; y++){
 #pragma HLS PIPELINE
   	sum[x][y] = 0;
-  	L7:		for (int m = 0; m<=3; m++)
-//  	#pragma HLS LOOP_TRIPCOUNT max=5
+  L7:		for (int m = 0; m<=3; m++)
   	#pragma HLS PIPELINE
   				sum[x][y] += powf(inp_image[m][x][y], 2);
-  	//		sum += powf(inp_img[m*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y], 2);
-
   		    out_img[INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y] = inp_image[1][x][y] / powf((1+0.00002*sum[x][y]), 0.75);
-  	//	    out_img[i*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y] = inp_img[i*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE
-
      }
   }
   //////////////////////////////////////////////////////////
 
 
 L8:	    	for (int i=2; i<INP_IMAGE_CHANNEL-2; i++){
-	/*
-	mu = i+n/2;
-	if (INP_IMAGE_CHANNEL-1 < i+n/2)
-	  mu = INP_IMAGE_CHANNEL-1;
-	ml = 0;
-	if (i-n/2 > 0)
-	  ml = i-n/2;
-*/
+	
 //#pragma HLS PIPELINE
 L9:	  for (int x=0; x<INP_IMAGE_SIZE; x++){
 
@@ -109,16 +95,10 @@ L9:	  for (int x=0; x<INP_IMAGE_SIZE; x++){
 L10:	    for (int y=0; y<INP_IMAGE_SIZE; y++){
 #pragma HLS PIPELINE
 	sum[x][y] = 0;
-//	float sum=0;
 L11:		for (int m = 0; m<=4; m++)
-//#pragma HLS LOOP_TRIPCOUNT max=5
 #pragma HLS PIPELINE
 			sum[x][y] += powf(inp_image[i-2+m][x][y], 2);
-//		sum += powf(inp_img[m*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y], 2);
-
 	    out_img[i*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y] = inp_image[i][x][y] / powf((1+0.00002*sum[x][y]), 0.75);
-//	    out_img[i*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y] = inp_img[i*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y] / powf((1+0.00002*sum), 0.75);
-
 	    }
 	  }
 	}
@@ -130,15 +110,10 @@ L12:	  for (int x=0; x<INP_IMAGE_SIZE; x++){
 L13:	    for (int y=0; y<INP_IMAGE_SIZE; y++){
 #pragma HLS PIPELINE
 	sum[x][y] = 0;
-	L14:		for (int m = INP_IMAGE_CHANNEL-4; m<=INP_IMAGE_CHANNEL-1; m++)
-//  	#pragma HLS LOOP_TRIPCOUNT max=5
+L14:		for (int m = INP_IMAGE_CHANNEL-4; m<=INP_IMAGE_CHANNEL-1; m++)
 	#pragma HLS PIPELINE
 				sum[x][y] += powf(inp_image[m][x][y], 2);
-	//		sum += powf(inp_img[m*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y], 2);
-
 		    out_img[(INP_IMAGE_CHANNEL-2)*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y] = inp_image[INP_IMAGE_CHANNEL-2][x][y] / powf((1+0.00002*sum[x][y]), 0.75);
-	//	    out_img[i*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y] = inp_img[i*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE
-
    }
 }
 //////////////////////////////////////////////////////////this is for chan = 2;
@@ -148,15 +123,12 @@ L15:	  for (int x=0; x<INP_IMAGE_SIZE; x++){
 L16:	    for (int y=0; y<INP_IMAGE_SIZE; y++){
 #pragma HLS PIPELINE
 	sum[x][y] = 0;
-	L17:		for (int m = INP_IMAGE_CHANNEL-3; m<=INP_IMAGE_CHANNEL-1; m++)
-//  	#pragma HLS LOOP_TRIPCOUNT max=5
+L17:		for (int m = INP_IMAGE_CHANNEL-3; m<=INP_IMAGE_CHANNEL-1; m++)
 	#pragma HLS PIPELINE
 				sum[x][y] += powf(inp_image[m][x][y], 2);
-	//		sum += powf(inp_img[m*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y], 2);
 
-W:		    out_img[(INP_IMAGE_CHANNEL-1)*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y] = inp_image[INP_IMAGE_CHANNEL-1][x][y] / powf((1+0.00002*sum[x][y]), 0.75);
-	//	    out_img[i*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y] = inp_img[i*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE
+		    out_img[(INP_IMAGE_CHANNEL-1)*INP_IMAGE_SIZE*INP_IMAGE_SIZE + x*INP_IMAGE_SIZE + y] = inp_image[INP_IMAGE_CHANNEL-1][x][y] / powf((1+0.00002*sum[x][y]), 0.75);
 
-   }
-}
+    }
+  }
 }
