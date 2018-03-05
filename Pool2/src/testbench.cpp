@@ -1,6 +1,10 @@
-//in this c++ file, we define the 1st convolution layer of Alexnet. Actually it's not just convolution, it's convolution together with
-//Relu, we just compare the output of the convolution, if it's greater than 0, then we store it as output, if it's negative, we store it as 0.
-//Also in caffe the Relu layer is inlined with the other layer.
+/* 
+======================================================
+*
+* Author:   Junnan Shan (junnan.shan@polito.it)
+*
+======================================================
+*/
 #include <sys/types.h>
 #include <sys/stat.h>
 //#include <fcnt1.h>
@@ -30,9 +34,8 @@ void pool2(DataType inp_img[INP_IMG_CHAN*INP_IMG_SIZE*INP_IMG_SIZE], DataType ou
 int main()
 {
 
-    ifstream inp_file("/home/junnan/Vivado_HLS/pool2/out_conv2.txt");
+    ifstream inp_file("/home/junnan/Vivado_HLS/Pool2/out_conv2.txt");
     DataType *inp_image;
-//    inp_image = (DataType *)sds_alloc( INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL * sizeof(DataType));
     inp_image = (DataType *)malloc( INP_IMG_SIZE * INP_IMG_SIZE * INP_IMG_CHAN * sizeof(DataType));
 	if(inp_file.is_open())
 	{
@@ -46,31 +49,20 @@ int main()
 		}
 		inp_file.close();
 	}
-    cout << "inp_image[0] = " << inp_image[0] << endl;
+ 
 
-	//DataType *out_image = (DataType *)sds_alloc(OUT_IMAGE_SIZE * OUT_IMAGE_SIZE * FILTER_BATCH * sizeof(DataType));
-	DataType *out_image = (DataType *)malloc(OUT_IMG_SIZE * OUT_IMG_SIZE * INP_IMG_CHAN * sizeof(DataType));
-//  float *out_image = (float *)malloc(OUT_IMAGE_SIZE * OUT_IMAGE_SIZE * FILTER_BATCH * sizeof(float));
-//  float out_image[OUT_IMAGE_SIZE * OUT_IMAGE_SIZE * FILTER_BATCH];
+  DataType *out_image = (DataType *)malloc(OUT_IMG_SIZE * OUT_IMG_SIZE * INP_IMG_CHAN * sizeof(DataType));
   cout << "Start calling the conv1 HW function" << endl;
 
-//  std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
   //call the "conv1" function using the "inp_image" argument, it returns the output in the "out_image" array
   pool2(inp_image, out_image);
 
-//  std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
   cout << "After calling the conv1 HW function" << endl;
-//  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count();
-//  cout << "duration = " << duration << endl;
   //free all the dynamically allocated memory
-//  sds_free(inp_image);
-  //sds_free(inp_image);
-  //sds_free(filter);
   free(inp_image);
-//  free(filter);
 
   //dump the output image into a txt file "out_image.txt"
-  ofstream data("/home/junnan/Vivado_HLS/pool2/out_image.txt");
+  ofstream data("/home/junnan/Vivado_HLS/Pool2/out_image.txt");
   for (int k = 0; k < OUT_IMG_SIZE*OUT_IMG_SIZE*INP_IMG_CHAN; k++)
     {
       data << out_image[k] << "\n";
@@ -80,6 +72,7 @@ int main()
   const DataType out_img[] = {
                          #include "out_pool2.txt"
                        };
+	
       DataType big_diff = 0;
       DataType diff[OUT_IMG_SIZE*OUT_IMG_SIZE*INP_IMG_CHAN];
   for (int i=0; i<OUT_IMG_SIZE*OUT_IMG_SIZE*INP_IMG_CHAN; i++){
@@ -91,21 +84,10 @@ int main()
 	  }
   }
   cout << "big_diff = " << big_diff << endl;
-//  cout << "out_img[69983] = " << out_img[69983] << endl;
-//  cout << "out_image[69983] = " << out_image[69983] << endl;
-/*
-  for (int i = 0; i < OUT_IMAGE_SIZE*OUT_IMAGE_SIZE*FILTER_BATCH; i++){
-    if ((out_img[i] - out_image[i] >= 0.001) || (out_img[i] - out_image[i] <= -0.001)){
-    //if (fabs(out_img[i] - out_image[i]) > EPSILON){
-    cout << "out_img[" << i << "] = " <<  out_img[i] << endl;
-    cout << "out_image[" << i << "] = " << out_image[i] << endl;
-    cout << "Functionality failed" << endl;
-         }
-}
-*/
+
 
   cout << "pooling Functionality pass" << endl;
-  //sds_free(out_image);
+  
   free(out_image);
   return 0;
 }
