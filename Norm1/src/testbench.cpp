@@ -1,6 +1,10 @@
-//in this c++ file, we define the 1st convolution layer of Alexnet. Actually it's not just convolution, it's convolution together with
-//Relu, we just compare the output of the convolution, if it's greater than 0, then we store it as output, if it's negative, we store it as 0.
-//Also in caffe the Relu layer is inlined with the other layer.
+/* 
+======================================================
+*
+* Author:   Junnan Shan (junnan.shan@polito.it)
+*
+======================================================
+*/
 #include <sys/types.h>
 #include <sys/stat.h>
 //#include <fcnt1.h>
@@ -20,8 +24,6 @@
 //typedef ap_fixed<32,16> DataType;
 typedef float DataType;
 
-//#define EPSILON 0.001
-
 using namespace std;
 
 void norm1(DataType inp_img[INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL],
@@ -33,7 +35,6 @@ int main()
 {
     ifstream inp_file("/home/junnan/Work/Vivado_HLS/Norm1/out_pool1.txt");
     DataType *inp_image;
-//    inp_image = (DataType *)sds_alloc( INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL * sizeof(DataType));
     inp_image = (DataType *)malloc( INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL * sizeof(DataType));
 	if(inp_file.is_open())
 	{
@@ -73,6 +74,7 @@ int main()
   const DataType out_img[] = {
                          #include "out_norm1.txt"
                        };
+	
       DataType big_diff = 0;
       DataType diff[OUT_IMAGE_SIZE*OUT_IMAGE_SIZE*OUT_IMAGE_CHANNEL];
   for (int i=0; i<OUT_IMAGE_SIZE*OUT_IMAGE_SIZE*OUT_IMAGE_CHANNEL; i++){
