@@ -76,5 +76,14 @@ This work includes the basic layers of AlexNet:
 
 All the parameters(Weights and Bias for convolution layers) are geneerated using "Caffe - Deep learning framwork". Each layer mentioned before is an independed Vivado HLS project. Each project contains the required files(testbench, header, top level function, and the Weights and Bias). All the computations are performed using single floating point data type. 
 
+# Work environment
+
+Tool: Vivado HLS 2017.3.1  
+Target FPGA: xcvu9p-flgb2104-2-i
+
+
+
+
+
 
 
