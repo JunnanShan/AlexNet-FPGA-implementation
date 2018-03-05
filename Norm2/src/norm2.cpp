@@ -1,3 +1,10 @@
+/* 
+======================================================
+*
+* Author:   Junnan Shan (junnan.shan@polito.it)
+*
+======================================================
+*/
 #include <sys/types.h>
 #include <sys/stat.h>
 //#include <fcnt1.h>
@@ -20,7 +27,7 @@ using namespace std;
 
 
 //The function need to be accelerated in FPGA.
-void norm(DataType inp_img[INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL],
+void norm2(DataType inp_img[INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL],
 	  DataType out_img[OUT_IMAGE_SIZE * OUT_IMAGE_SIZE * OUT_IMAGE_CHANNEL])
 {
 
