@@ -12,7 +12,7 @@
 #include <iomanip>
 #include <math.h>
 #include <fstream>
-#include "padding3.h"
+#include "pad3.h"
 #include "ap_fixed.h"
 
 //typedef ap_fixed<32,16> DataType;
@@ -23,7 +23,7 @@ using namespace std;
 
 
 //The function need to be accelerated in FPGA.
-void padding3(DataType inp_img[INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL],
+void pad3(DataType inp_img[INP_IMAGE_SIZE * INP_IMAGE_SIZE * INP_IMAGE_CHANNEL],
 	     DataType out_img[OUT_IMAGE_SIZE * OUT_IMAGE_SIZE * OUT_IMAGE_CHANNEL])
 	   
 {
