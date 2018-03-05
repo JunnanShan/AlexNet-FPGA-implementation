@@ -3,9 +3,6 @@
 *
 * Author:   Junnan Shan (junnan.shan@polito.it)
 *
-* Top function is defined here with interface specified as axi4.
-* It creates an object of blackScholes and launches the simulation.
-*
 ======================================================
 */
 
