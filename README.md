@@ -4,7 +4,7 @@ This repository contains all the parameters you need to synthesize the AlexNet b
 
 # Intro to AlexNet
 
-This work includes the basic layers of AlexNet:
+There are the basic layers of AlexNet in the following:
 
  1. Conv1 + Relu
   Input dimention: 3 * 227 * 227   
